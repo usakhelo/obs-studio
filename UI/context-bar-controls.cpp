@@ -546,9 +546,9 @@ void ColorSourceToolbar::on_choose_clicked()
 	QColorDialog::ColorDialogOptions options;
 
 	options |= QColorDialog::ShowAlphaChannel;
-#ifndef _WIN32
-	options |= QColorDialog::DontUseNativeDialog;
-#endif
+//#ifndef _WIN32
+//	options |= QColorDialog::DontUseNativeDialog;
+//#endif
 
 	QColor newColor = QColorDialog::getColor(color, this, desc, options);
 	if (!newColor.isValid()) {

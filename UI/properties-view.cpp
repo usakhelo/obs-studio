@@ -1773,9 +1773,9 @@ bool WidgetInfo::ColorChangedInternal(const char *setting, bool supportAlpha)
 	 * other open QDialogs on exit, and
 	 * https://bugreports.qt-project.org/browse/QTBUG-34532
 	 */
-#ifndef _WIN32
-	options |= QColorDialog::DontUseNativeDialog;
-#endif
+//#ifndef _WIN32
+//	options |= QColorDialog::DontUseNativeDialog;
+//#endif
 
 	color = QColorDialog::getColor(color, view, QT_UTF8(desc), options);
 	if (!color.isValid())

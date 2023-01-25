@@ -54,6 +54,15 @@ static inline bool fill_buffer(struct audio_monitor *monitor)
 	return true;
 }
 
+static void on_pause_audio(void *data, calldata_t *calldata)
+{
+	UNUSED_PARAMETER(calldata);
+	struct audio_monitor *monitor = data;
+	pthread_mutex_lock(&monitor->mutex);
+	circlebuf_free(&monitor->new_data);
+	pthread_mutex_unlock(&monitor->mutex);
+}
+
 static void on_audio_playback(void *param, obs_source_t *source,
 			      const struct audio_data *audio_data, bool muted)
 {
@@ -122,7 +131,6 @@ static void on_audio_playback(void *param, obs_source_t *source,
 static void buffer_audio(void *data, AudioQueueRef aq, AudioQueueBufferRef buf)
 {
 	struct audio_monitor *monitor = data;
-
 	pthread_mutex_lock(&monitor->mutex);
 	circlebuf_push_back(&monitor->empty_buffers, &buf, sizeof(buf));
 	while (monitor->empty_buffers.size > 0) {
@@ -288,6 +296,8 @@ static void audio_monitor_init_final(struct audio_monitor *monitor)
 
 	obs_source_add_audio_capture_callback(monitor->source,
 					      on_audio_playback, monitor);
+	obs_source_add_audio_pause_callback(monitor->source, on_pause_audio,
+					    monitor);
 }
 
 struct audio_monitor *audio_monitor_create(obs_source_t *source)
